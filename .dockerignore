@@ -1,0 +1,12 @@
+# Dépendances Node
+node_modules/
+
+# Base de données SQLite locale (pour ne pas versionner tes données de test)
+*.db
+*.sqlite
+*.sqlite3
+
+# Fichiers d'environnement et logs
+.env
+npm-debug.log*
+.DS_Store
