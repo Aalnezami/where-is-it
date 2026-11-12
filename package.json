@@ -1,0 +1,21 @@
+{
+  "name": "where-is-it",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serveur.js",
+  "scripts": {
+    "type": "module",
+    "start": "node serveur.js",
+    "dev": "node --watch serveur.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.1.1",
+    "express": "^5.3.0"
+  }
+}

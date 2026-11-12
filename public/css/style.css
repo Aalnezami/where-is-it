@@ -1,0 +1,82 @@
+/* Where is it ? — signature : étiquettes penchées + découpes en diagonale */
+:root{
+  --navy:#1E2468; --coral:#D6382F; --coral-l:#FF6B5E; --mint:#38D9B4; --teal:#0E7C66; --sun:#FFC845;
+  --paper:#FFF8EC; --card:#FFFDF7; --ink:#1B1F3B; --muted:#555B78; --line:#E8DCC3;
+  --bs-body-bg:var(--paper); --bs-body-color:var(--ink);
+  --bs-body-font-family:"Source Sans 3",system-ui,sans-serif;
+  --bs-link-color:var(--teal);
+}
+body{font-size:1.05rem;line-height:1.6}
+h1,h2,h3,.navbar-brand{font-family:"Fraunces",Georgia,serif;font-weight:700;letter-spacing:-.01em}
+.text-muted{color:var(--muted)!important}
+
+/* Accessibilité */
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:4px;box-shadow:0 0 0 6px var(--navy)}
+.skip-link{position:absolute;left:8px;top:8px;z-index:20;background:var(--sun);color:var(--navy);padding:8px 14px;border-radius:6px;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.pause{display:none!important}}
+
+/* Barre de navigation */
+.navbar{background:var(--navy);border-bottom:4px solid var(--sun)}
+.navbar-brand{display:flex;align-items:center;gap:2px;font-size:1.35rem}
+.pin{margin-right:8px}
+.stk{display:inline-block;padding:1px 10px;border-radius:4px;box-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.s1{background:var(--coral);color:#fff;transform:rotate(-3deg)}
+.s2{background:var(--sun);color:var(--navy);transform:rotate(2.5deg);margin-left:-3px}
+.nav-link{color:#fff}
+.nav-link:hover{color:var(--sun)}
+.nav-link.active{color:#fff;font-weight:600;text-decoration:underline;text-decoration-color:var(--sun);text-underline-offset:7px;text-decoration-thickness:3px}
+.btn-flag{display:inline-flex;align-items:center;gap:7px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.55);border-radius:6px;padding:3px 9px;font-weight:600}
+.btn-flag[aria-pressed="true"]{background:#fff;color:var(--navy);border-color:#fff}
+.btn-flag svg{border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+.btn-sun{background:var(--sun);color:var(--navy);border-color:var(--sun);font-weight:600}
+.btn-sun:hover{background:#ffd668;color:var(--navy)}
+
+/* Boutons */
+.btn-ink{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-ink:hover{background:#ffd668;color:#fff}
+.btn-outline-ink{border:2px solid var(--navy);color:var(--navy)}
+.btn-outline-ink:hover{background:var(--navy);color:#fff}
+/* Boutons en parallélogramme (signature) */
+.btn-slant{transform:skewX(-12deg);border:0;border-radius:2px;padding:14px 30px;font-weight:600}
+.btn-slant>span{display:inline-block;transform:skewX(12deg)}
+.btn-lost{background:var(--coral);color:#fff}
+.btn-found{background:var(--mint);color:var(--navy)}
+.btn-slant:hover{background:#ffd668;color:var(--navy);filter:brightness(1.08);transform:skewX(-12deg) translateY(-2px)}
+
+/* Hero : photos qui défilent en fond */
+.hero{position:relative;overflow:hidden;background:var(--navy);color:#fff;padding:clamp(48px,8vw,90px) 0 clamp(110px,14vw,170px);clip-path:polygon(0 0,100% 0,100% 90%,0 100%)}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(30,36,104,.96) 0 42%,rgba(30,36,104,.6) 100%)}
+.hero-bg{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-around;padding:10px 0}
+.row-track{display:flex;width:max-content;animation:scroll 80s linear infinite}
+.row-track.rev{animation-direction:reverse;animation-duration:95s}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.hero.paused .row-track{animation-play-state:paused}
+.ph{flex:none;width:210px;height:155px;margin-right:20px;border:5px solid #fff;border-radius:3px;object-fit:cover;box-shadow:0 6px 16px rgba(0,0,0,.35);transform:rotate(var(--r,-2deg))}
+.ph.blank{background:repeating-linear-gradient(135deg,var(--c1) 0 14px,var(--c2) 14px 28px)}
+.hero-content{position:relative;z-index:2}
+.hero h1{font-size:clamp(2.2rem,6vw,3.9rem);line-height:1.08;max-width:17ch}
+.hero .lead{max-width:44ch;color:#E9EAF8}
+.kicker{display:inline-block;text-transform:uppercase;letter-spacing:.12em;font-size:.82rem;font-weight:600;color:var(--navy);background:var(--sun);padding:3px 12px;transform:rotate(-1.5deg)}
+.note{font-family:"Caveat",cursive;font-size:2.6rem;color:var(--sun);transform:rotate(-2deg);display:inline-block;margin:4px 0 0}
+.pause{position:absolute;top:12px;right:12px;z-index:3;background:rgba(30,36,104,.85);color:#fff;border:2px solid #fff;border-radius:6px;padding:4px 12px;font-size:.9rem}
+
+/* Recherche */
+.search-box{position:relative;z-index:3;background:var(--card);border:5px solid var(--navy);border-radius:6px;padding:24px;margin-top:-100px;box-shadow:8px 8px 0 var(--sun)}
+.form-control,.form-select{border-color:#9aa0c4;background-color:#fff}
+
+/* Annonces : étiquettes de bagage */
+.tag-card{position:relative;background:var(--card);border:1px solid var(--line);border-top:7px solid var(--muted);border-radius:6px 22px 6px 22px;padding:20px 20px 18px;height:100%;transition:transform .15s}
+.tag-card.lost{border-top-color:var(--coral-l)} .tag-card.found{border-top-color:var(--mint)}
+.tag-card:hover{transform:rotate(-.8deg) translateY(-3px)}
+.tag-card::before{content:"";position:absolute;top:14px;right:14px;width:14px;height:14px;border-radius:50%;background:var(--paper);border:2px solid var(--line)}
+.tag-card h3{font-size:1.15rem;margin:10px 36px 10px 0}
+.tag-card dl{margin:0;color:var(--muted);font-size:.95rem}
+.tag-card dt{float:left;clear:left;margin-right:.4em;font-weight:600}
+.badge-type{font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:99px;border:1.5px solid currentColor}
+.badge-lost{color:var(--coral)} .badge-found{color:var(--teal)}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;border:1px solid rgba(0,0,0,.35);vertical-align:-.08em;margin-right:.3em}
+
+/* Comment ça marche */
+.steps{background:var(--sun);color:var(--navy);clip-path:polygon(0 7%,100% 0,100% 100%,0 100%);padding-top:36px}
+.num{display:inline-grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:50%;background:var(--navy);color:var(--sun);font-family:"Fraunces",serif;font-weight:700;margin-bottom:8px;transform:rotate(-6deg)}
+footer{background:var(--navy);color:#E9EAF8}
