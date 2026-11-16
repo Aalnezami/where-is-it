@@ -9,4 +9,4 @@ node_modules/
 # Fichiers d'environnement et logs
 .env
 npm-debug.log*
-.DS_Store
+.DS_Store 

@@ -14,7 +14,7 @@ export function get(req, res) {
 
 export function create(req, res) {
   const b = req.body;
-  if (!b.user_id || !b.title || !b.place || !b.date ||
+  if (!b.user_id || !b.title || !b.place || !b.city || !b.date ||
       !TYPES.includes(b.type) || !CATS.includes(b.category) || !COLORS.includes(b.color))
     return res.status(400).json({ error: "Champs manquants ou invalides" });
 
