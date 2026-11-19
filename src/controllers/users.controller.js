@@ -13,3 +13,12 @@ export function register(req, res) {
     throw e;
   }
 }
+
+export function userLogin(req, res) {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: "email et password sont requis" });
+
+  // TODO : vérifier l'email et le mot de passe, renvoyer un token JWT si OK
+  res.status(501).json({ error: "Non implémenté" });
+}

@@ -146,6 +146,24 @@ function afficherAnnonces(items) {
         : `<p class="col-12 text-center text-muted">${t("results.empty.hint")}</p>`;
 }
 
+/**
+ * gestion de localStorage pour les favoris : on stocke un tableau d'ids d'annonces
+ */
+const getFavoris = () => JSON.parse(localStorage.getItem("favoris") || "[]");
+
+function toggleFavori(btn) {
+    const id = Number(btn.dataset.id), liste = getFavoris();
+    const maj = liste.includes(id) ? liste.filter(x => x !== id) : [...liste, id];
+    localStorage.setItem("favoris", JSON.stringify(maj));
+    btn.setAttribute("aria-pressed", maj.includes(id));
+}
+
+$("mResults").addEventListener("click", e => {
+    const btn = e.target.closest(".fav");
+    if (btn) toggleFavori(btn);
+});
+
+
 /** 
  * Une carte d'annonce 
  */
@@ -154,43 +172,22 @@ function creerCarte(i) {
     const date = new Date(i.date).toLocaleDateString(document.documentElement.lang);
     const src = i.photo ? "/uploads/" + i.photo : "../img/default-item.svg";
     return `
-        <div class="col-6 col-md-3 col-lg-4">
+        <div class="col-6 col-md-3 col-lg-4" style="min-width: 230px; max-width:100%">
           <article class="tag-card" style="border-top-color:${esc(i.type_hex)}">
             <span class="badge-type" style="color:${esc(i.type_hex)}">${esc(en ? i.type_en : i.type_fr)}</span>
             <img class="card-photo mt-2" src="${esc(src)}" alt="${i.photo ? esc(i.title) : ""}" loading="lazy" onerror="this.onerror=null;this.src='../img/default-item.svg'">
             <h3 class="h5 mt-2">${esc(i.title)}</h3>
             <p class="mb-0">${esc(en ? i.category_en : i.category_fr)}<br>
             ${esc(i.place)}, ${esc(i.city)}<br>
-            ${date} . <span class="dot_annonce" style="background:${esc(i.color_hex)}" aria-hidden="true"></span>${esc(en ? i.color_en : i.color_fr)}<br>
+            ${date} . <span class="dot_annonce" style="background:${esc(i.color_hex)}" aria-hidden="true"></span>${esc(en ? i.color_en : i.color_fr)}
+            <span class="float-end">
+                <button type="button" class="fav" data-id="${i.id}" aria-pressed="${getFavoris().includes(i.id)}"aria-label="${t("fav.label")} : ${esc(i.title)}"></button>
+            </span>
             </p>
           </article>
         </div>`;
 }
 
-// function creerCarte2(i) {
-//     const en = document.documentElement.lang === "en";
-//     const date = new Date(i.date).toLocaleDateString(document.documentElement.lang);
-//     const src = i.photo ? "/uploads/" + i.photo : "/img/default-item.svg";
-//     return `
-//         <div class="col-12 col-md-6 col-lg-4">
-//           <article class="card item-card text-white" style="border-top-color:${esc(i.type_hex)}">
-//             <img class="card-img" src="${esc(src)}" alt="${i.photo ? esc(i.title) : ""}" loading="lazy"
-//                  onerror="this.onerror=null;this.src='/img/default-item.svg'">
-//             <div class="card-img-overlay d-flex flex-column justify-content-between">
-//               <div class="d-flex justify-content-between align-items-start">
-//                 <span class="badge" style="background:${esc(i.type_hex)}">${esc(en ? i.type_en : i.type_fr)}</span>
-                
-//               </div>
-//               <div>
-//                 <h3 class="card-title h5">${esc(i.title)}</h3>
-//                 <p class="card-text small mb-2">${esc(en ? i.category_en : i.category_fr)} · ${esc(i.place)}, ${esc(i.city)}<br>
-//                   ${date} · <span class="dot" style="background:${esc(i.color_hex)}" aria-hidden="true"></span>${esc(en ? i.color_en : i.color_fr)}</p>
-//                 <a href="#item-${i.id}" class="btn btn-sun btn-sm">${t("card.view")}<span class="visually-hidden"> : ${esc(i.title)}</span></a>
-//               </div>
-//             </div>
-//           </article>
-//         </div>`;
-// }
 
 /** 
  * Boutons précédent / suivant (cachés s'il n'y a qu'une page) 
