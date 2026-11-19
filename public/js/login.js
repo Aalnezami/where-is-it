@@ -1,4 +1,6 @@
-// Page de connexion : validation Bootstrap, bouton afficher/masquer, envoi au serveur
+/**
+ * Page de connexion : validation Bootstrap, bouton afficher/masquer, envoi au serveur
+ */
 const $ = id => document.getElementById(id);
 
 function updateToggle() {

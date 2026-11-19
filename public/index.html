@@ -17,9 +17,9 @@
   <header>
     <nav class="navbar navbar-expand-lg" data-bs-theme="dark" aria-label="Navigation principale" data-i18n-aria="nav.label">
       <div class="container">
-        <a class="navbar-brand" href="index.html">
-          <svg class="pin" viewBox="0 0 24 30" width="22" height="27" aria-hidden="true"><path d="M12 0C5.4 0 0 5.2 0 11.7 0 20 12 30 12 30s12-10 12-18.3C24 5.2 18.6 0 12 0z" fill="#38D9B4"/><circle cx="12" cy="11.5" r="4.5" fill="#1E2468"/></svg>
-          <span class="stk s1">Where is</span><span class="stk s2">it ?</span>
+        <a class="navbar-brand" href="index.html" aria-label="WIT, Where is it ?">
+          <svg class="pin" viewBox="0 0 24 30" width="30" height="35" aria-hidden="true"><path d="M12 0C5.4 0 0 5.2 0 11.7 0 20 12 30 12 30s12-10 12-18.3C24 5.2 18.6 0 12 0z" fill="#38D9B4"/><circle cx="12" cy="11.5" r="4.5" fill="#1E2468"/></svg>
+          <span class="stk s1">W</span><span class="stk s2">I</span><span class="stk s3">T</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
                 aria-controls="menu" aria-expanded="false" aria-label="Menu" data-i18n-aria="nav.toggle">
@@ -27,7 +27,7 @@
         </button>
         <div class="collapse navbar-collapse" id="menu">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#recherche" data-i18n="nav.search">Rechercher</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html" data-i18n="nav.search">Rechercher</a></li>
           </ul>
           <div class="d-flex align-items-center gap-3">
             <div class="d-flex gap-2" role="group" aria-label="Langue" data-i18n-aria="lang.label">
@@ -70,48 +70,49 @@
       <h2 id="t-search" class="h4" data-i18n="search.title">Chercher un objet</h2>
       <div class="row flex-wrap gap-3 mt-4 mx-2 mb-3">
           <button onclick="selectObjetRecherche(1)" class="col btn btn-slant btn-lost btn-lg">
-            <span>J’ai perdu quelque chose</span>
+            <span data-i18n="cta.lost">J’ai perdu quelque chose</span>
             <strong id="icon_check_perdu">
             </strong>
           </button>
           <button onclick="selectObjetRecherche(2)" class="col btn btn-slant btn-found btn-lg" id="icon-check2">
-            <span>J’ai trouvé quelque chose</span>
+            <span data-i18n="cta.found">J’ai trouvé quelque chose</span>
             <strong id="icon_check_trouve">
             </strong>
           </button>
         </div>
       <form id="form" class="row g-3" role="search">
+        <div id="messageContainer" class="d-none"></div>
         <div class="col-12 col-md-3">
-          <label for="q" class="form-label" data-i18n="search.q">Mot-clé</label>
+          <label for="q" class="form-label" data-i18n="search.q"></label>
           <input id="q" class="form-control" type="search" autocomplete="off" placeholder="clés, sac, carte…" data-i18n-ph="search.ph">
         </div>
         <div class="col-12 col-md-3">
-          <label for="cat" class="form-label" data-i18n="search.cat">Catégorie de l'objet</label>
-          <select id="categorie" class="form-select" data-i18n-ph="search.ph">
-            <option value="" data-i18n="search.all">Choisissez une catégorie</option>
+          <label for="cat" class="form-label" data-i18n="search.cat"></label>
+          <select id="categorie" class="form-select" data-i18n-ph="search.cat.ph">
+            <option value="" data-i18n="search.all"></option>
           </select>
         </div>
         <div class="col-12 col-md-3">
-          <label for="villes" class="form-label" data-i18n="search.ville">Ville où l'objet a été trouvé/perdu</label>
-          <select id="villes" class="form-select" data-i18n-ph="search.ph">
-            <option value="" data-i18n="search.all">Choisissez une ville</option>
+          <label for="villes" class="form-label" data-i18n="search.ville"></label>
+          <select id="villes" class="form-select" data-i18n-ph="search.ville.ph">
+            <option value="" data-i18n="search.all"></option>
           </select>
         </div>
          <div class="col-12 col-md-3">
-          <label for="couleurs" class="form-label" data-i18n="search.couleur">Couleur de l'objet</label>
-          <select id="couleurs" class="form-select" data-i18n-ph="search.ph">
-            <option value="" data-i18n="search.all">Choisissez une couleur</option>
+          <label for="couleurs" class="form-label" data-i18n="search.couleur"></label>
+          <select id="couleurs" class="form-select" data-i18n-ph="search.couleur.ph">
+            <option value="" data-i18n="search.all"></option>
           </select>
         </div>
         <div class="col-12 col-md d-grid align-items-end">
-          <button class="btn btn-ink" type="submit" data-i18n="search.go">Chercher</button>
+          <button class="btn btn-ink" onclick="searchItems()" data-i18n="search.go"></button>
         </div>
       </form>
     </section>
 
     <section class="container py-5" aria-labelledby="t-recent">
       <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-3">
-        <h2 id="t-recent" class="h3 mb-0" data-i18n="recent.title">Annonces récentes</h2>
+        <h2 id="t-recent" class="h3 mb-0" data-i18n="recent.title"></h2>
         <p id="count" class="text-muted mb-0" role="status" aria-live="polite"></p>
       </div>
       <div id="results" class="row g-4"></div>
@@ -121,12 +122,69 @@
       <div class="container py-5">
         <h2 id="t-steps" class="h3 mb-4" data-i18n="steps.title">Comment ça marche</h2>
         <ol class="row g-4 list-unstyled">
-          <li class="col-md-4"><span class="num" aria-hidden="true">1</span><h3 class="h5" data-i18n="s1.t">Tu publies</h3><p data-i18n="s1.p">Une photo, un lieu, une date : deux minutes suffisent.</p></li>
+          <li class="col-md-4"><span class="num" aria-hidden="true">1</span><h3 class="h5" data-i18n="s1.t"></h3><p data-i18n="s1.p">Une photo, un lieu, une date : deux minutes suffisent.</p></li>
           <li class="col-md-4"><span class="num" aria-hidden="true">2</span><h3 class="h5" data-i18n="s2.t">On rapproche</h3><p data-i18n="s2.p">L’appli te propose les annonces qui ressemblent à la tienne.</p></li>
           <li class="col-md-4"><span class="num" aria-hidden="true">3</span><h3 class="h5" data-i18n="s3.t">Tu récupères</h3><p data-i18n="s3.p">Tu envoies une demande, la personne accepte, et c’est réglé.</p></li>
         </ol>
       </div>
     </section>
+
+    <div class="modal fade" id="resultsModal" tabindex="-1" aria-labelledby="resultsTitle" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down">
+        <div class="modal-content">
+
+          <div class="modal-header d-block">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h2 class="modal-title h5 mb-0" id="resultsTitle" data-i18n="results.title">Résultats de ta recherche</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+
+            <form id="mFilters" class="row g-2 align-items-center">
+              <div class="col-12 col-lg-auto">
+                <div class="btn-group btn-group-sm w-100" role="group" aria-label="Type d'annonce" data-i18n-aria="f.type">
+                  <input type="radio" class="btn-check" name="mType" id="mLost" value="1" autocomplete="off">
+                  <label class="btn btn-outline-light" for="mLost" data-i18n="type.lost">Perdu</label>
+                  <input type="radio" class="btn-check" name="mType" id="mFound" value="2" autocomplete="off">
+                  <label class="btn btn-outline-light" for="mFound" data-i18n="type.found">Trouvé</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg">
+                <label for="mQ" class="visually-hidden" data-i18n="search.q">Mot-clé</label>
+                <input id="mQ" class="form-control form-control-sm" type="search" autocomplete="off" placeholder="clés, sac, carte…" data-i18n-ph="search.ph">
+              </div>
+              <div class="col-6 col-md-3 col-lg">
+                <label for="mCat" class="visually-hidden" data-i18n="search.cat">Catégorie</label>
+                <select id="mCat" class="form-select form-select-sm"></select>
+              </div>
+              <div class="col-6 col-md-3 col-lg">
+                <label for="mCity" class="visually-hidden" data-i18n="f.city">Ville</label>
+                <select id="mCity" class="form-select form-select-sm"></select>
+              </div>
+              <div class="col-6 col-md-3 col-lg">
+                <label for="mColor" class="visually-hidden" data-i18n="f.color">Couleur</label>
+                <select id="mColor" class="form-select form-select-sm"></select>
+              </div>
+              <div class="col-6 col-md-3 col-lg-auto d-grid">
+                <button class="btn btn-sun btn-sm" type="button" onclick="chercherDepuisPopup()" data-i18n="search.go">Chercher</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-body">
+            <p id="mCount" role="status"></p>
+            <div id="mResults" class="row g-4"></div>
+          </div>
+
+          <div id="mFooter" class="modal-footer justify-content-between">
+            <button id="prev" type="button" class="btn btn-outline-ink btn-sm" data-i18n="pager.prev">Précédent</button>
+            <span id="pageInfo"></span>
+            <button id="next" type="button" class="btn btn-outline-ink btn-sm" data-i18n="pager.next">Suivant</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <footer class="py-4">
@@ -134,7 +192,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/i18n.js"></script>
+  <script src="js/l18.js"></script>
   <script src="js/app.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>

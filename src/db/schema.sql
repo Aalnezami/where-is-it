@@ -176,3 +176,344 @@ CREATE INDEX IF NOT EXISTS idx_claims_claimant ON claims (claimant_id);
 CREATE INDEX IF NOT EXISTS idx_items_search ON items (category_id, type_id, date);
 CREATE INDEX IF NOT EXISTS idx_messages_claim ON messages (claim_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_items_city ON items (city_id);
+
+
+
+-- donnes de test
+INSERT OR IGNORE INTO users (nom, prenom, email, password_hash)
+VALUES
+('Martin', 'Lucas', 'lucas.martin@test.fr', 'HASH_TEST_1'),
+('Le Goff', 'Emma', 'emma.legoff@test.fr', 'HASH_TEST_2'),
+('Bernard', 'Adam', 'adam.bernard@test.fr', 'HASH_TEST_3'),
+('Moreau', 'Sarah', 'sarah.moreau@test.fr', 'HASH_TEST_4'),
+('Petit', 'Thomas', 'thomas.petit@test.fr', 'HASH_TEST_5'),
+('Dubois', 'Lina', 'lina.dubois@test.fr', 'HASH_TEST_6');
+
+
+
+
+-- 1 : Clés perdues
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'lucas.martin@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'Trousseau de clés perdu',
+    'Trousseau de trois clés avec porte-clés bleu.',
+    (SELECT id FROM categories WHERE label_fr = 'Clés'),
+    (SELECT id FROM colors WHERE label_fr = 'Bleu'),
+    'Bibliothèque universitaire',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-10'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Trousseau de clés perdu'
+);
+
+-- 2 : Clés trouvées (correspondance potentielle avec annonce 1)
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'emma.legoff@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Trousseau de clés trouvé',
+    'Trois clés avec un porte-clés bleu trouvées près de la bibliothèque.',
+    (SELECT id FROM categories WHERE label_fr = 'Clés'),
+    (SELECT id FROM colors WHERE label_fr = 'Bleu'),
+    'Bibliothèque universitaire',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-11'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Trousseau de clés trouvé'
+);
+
+-- 3 : Téléphone perdu
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'adam.bernard@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'iPhone perdu',
+    'iPhone noir avec coque transparente.',
+    (SELECT id FROM categories WHERE label_fr = 'Téléphones'),
+    (SELECT id FROM colors WHERE label_fr = 'Noir'),
+    'Amphithéâtre A',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-12'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'iPhone perdu'
+);
+
+-- 4 : Téléphone trouvé
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'sarah.moreau@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Téléphone trouvé amphithéâtre',
+    'Téléphone noir avec coque transparente trouvé sur une chaise.',
+    (SELECT id FROM categories WHERE label_fr = 'Téléphones'),
+    (SELECT id FROM colors WHERE label_fr = 'Noir'),
+    'Amphithéâtre A',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-12'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Téléphone trouvé amphithéâtre'
+);
+
+-- 5 : Sac perdu
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'thomas.petit@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'Sac à dos perdu',
+    'Sac à dos noir contenant des cahiers et une trousse.',
+    (SELECT id FROM categories WHERE label_fr = 'Sacs'),
+    (SELECT id FROM colors WHERE label_fr = 'Noir'),
+    'Hall du bâtiment C',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-08'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Sac à dos perdu'
+);
+
+-- 6 : Sac trouvé
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'lina.dubois@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Sac noir trouvé',
+    'Sac noir avec plusieurs cahiers à l intérieur.',
+    (SELECT id FROM categories WHERE label_fr = 'Sacs'),
+    (SELECT id FROM colors WHERE label_fr = 'Noir'),
+    'Hall du bâtiment C',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-09'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Sac noir trouvé'
+);
+
+-- 7 : Carte étudiante perdue
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'lucas.martin@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'Carte étudiante perdue',
+    'Carte étudiante dans un étui transparent.',
+    (SELECT id FROM categories WHERE label_fr = 'Cartes et papiers'),
+    (SELECT id FROM colors WHERE label_fr = 'Transparent'),
+    'Cafétéria',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-13'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Carte étudiante perdue'
+);
+
+-- 8 : Carte trouvée
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'emma.legoff@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Carte étudiante trouvée',
+    'Carte trouvée près des tables de la cafétéria.',
+    (SELECT id FROM categories WHERE label_fr = 'Cartes et papiers'),
+    (SELECT id FROM colors WHERE label_fr = 'Transparent'),
+    'Cafétéria',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-13'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Carte étudiante trouvée'
+);
+
+-- 9 : Ordinateur perdu
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'adam.bernard@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'Ordinateur portable perdu',
+    'Ordinateur gris de marque Lenovo avec autocollant.',
+    (SELECT id FROM categories WHERE label_fr = 'Ordinateurs et tablettes'),
+    (SELECT id FROM colors WHERE label_fr = 'Gris'),
+    'Salle informatique 204',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-14'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Ordinateur portable perdu'
+);
+
+-- 10 : Écouteurs trouvés
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'sarah.moreau@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Écouteurs trouvés',
+    'Écouteurs sans fil blancs dans leur boîtier.',
+    (SELECT id FROM categories WHERE label_fr = 'Écouteurs et casques'),
+    (SELECT id FROM colors WHERE label_fr = 'Blanc'),
+    'Salle informatique 204',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-14'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Écouteurs trouvés'
+);
+
+-- 11 : Gourde perdue
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'thomas.petit@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Perdu'),
+    'Gourde perdue',
+    'Gourde métallique verte avec bouchon noir.',
+    (SELECT id FROM categories WHERE label_fr = 'Gourdes et bouteilles'),
+    (SELECT id FROM colors WHERE label_fr = 'Vert'),
+    'Terrain de sport',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-15'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Gourde perdue'
+);
+
+-- 12 : Montre trouvée
+INSERT INTO items (user_id, type_id, title, description, category_id, color_id, place, city_id, date)
+SELECT
+    (SELECT id FROM users WHERE email = 'lina.dubois@test.fr'),
+    (SELECT id FROM itemType WHERE label_fr = 'Trouvé'),
+    'Montre trouvée',
+    'Montre avec bracelet argenté trouvée dans un couloir.',
+    (SELECT id FROM categories WHERE label_fr = 'Montres et bijoux'),
+    (SELECT id FROM colors WHERE label_fr = 'Argenté'),
+    'Couloir bâtiment A',
+    (SELECT id FROM cities WHERE name = 'Brest' AND postal_code = '29200'),
+    '2026-11-16'
+WHERE NOT EXISTS (
+    SELECT 1 FROM items WHERE title = 'Montre trouvée'
+);
+
+
+
+
+-- Réclamation 1 : Lucas réclame le trousseau trouvé (en attente)
+INSERT OR IGNORE INTO claims (item_id, claimant_id, status_id)
+VALUES (
+    (SELECT id FROM items WHERE title = 'Trousseau de clés trouvé'),
+    (SELECT id FROM users WHERE email = 'lucas.martin@test.fr'),
+    (SELECT id FROM claimStatus WHERE label_fr = 'En attente')
+);
+
+-- Réclamation 2 : Adam réclame le téléphone trouvé (acceptée)
+INSERT OR IGNORE INTO claims (item_id, claimant_id, status_id)
+VALUES (
+    (SELECT id FROM items WHERE title = 'Téléphone trouvé amphithéâtre'),
+    (SELECT id FROM users WHERE email = 'adam.bernard@test.fr'),
+    (SELECT id FROM claimStatus WHERE label_fr = 'Acceptée')
+);
+
+-- Réclamation 3 : Thomas réclame le sac trouvé (refusée)
+INSERT OR IGNORE INTO claims (item_id, claimant_id, status_id)
+VALUES (
+    (SELECT id FROM items WHERE title = 'Sac noir trouvé'),
+    (SELECT id FROM users WHERE email = 'thomas.petit@test.fr'),
+    (SELECT id FROM claimStatus WHERE label_fr = 'Refusée')
+);
+
+-- Réclamation 4 : Lucas réclame la carte trouvée (clôturée)
+INSERT OR IGNORE INTO claims (item_id, claimant_id, status_id)
+VALUES (
+    (SELECT id FROM items WHERE title = 'Carte étudiante trouvée'),
+    (SELECT id FROM users WHERE email = 'lucas.martin@test.fr'),
+    (SELECT id FROM claimStatus WHERE label_fr = 'Clôturée')
+);
+
+
+
+
+
+
+-- Messages pour le trousseau de clés
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Bonjour, je pense que ce trousseau est le mien. Il possède trois clés et un porte-clés bleu.'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'lucas.martin@test.fr'
+WHERE i.title = 'Trousseau de clés trouvé'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Bonjour, je pense que ce trousseau est le mien. Il possède trois clés et un porte-clés bleu.'
+);
+
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Bonjour, pouvez-vous me préciser où et quand vous avez perdu vos clés ?'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'emma.legoff@test.fr'
+WHERE i.title = 'Trousseau de clés trouvé'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Bonjour, pouvez-vous me préciser où et quand vous avez perdu vos clés ?'
+);
+
+-- Messages pour le téléphone
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Le téléphone perdu est bien un iPhone noir avec une coque transparente.'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'adam.bernard@test.fr'
+WHERE i.title = 'Téléphone trouvé amphithéâtre'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Le téléphone perdu est bien un iPhone noir avec une coque transparente.'
+);
+
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Merci pour les précisions. La réclamation est acceptée.'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'sarah.moreau@test.fr'
+WHERE i.title = 'Téléphone trouvé amphithéâtre'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Merci pour les précisions. La réclamation est acceptée.'
+);
+
+-- Messages pour le sac
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Je pense que ce sac est le mien, il contient des cahiers et une trousse.'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'thomas.petit@test.fr'
+WHERE i.title = 'Sac noir trouvé'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Je pense que ce sac est le mien, il contient des cahiers et une trousse.'
+);
+
+INSERT INTO messages (claim_id, sender_id, body)
+SELECT
+    c.id,
+    u.id,
+    'Les informations ne permettent pas de confirmer que le sac vous appartient.'
+FROM claims c
+JOIN items i ON i.id = c.item_id
+JOIN users u ON u.email = 'lina.dubois@test.fr'
+WHERE i.title = 'Sac noir trouvé'
+AND NOT EXISTS (
+    SELECT 1 FROM messages m
+    WHERE m.claim_id = c.id AND m.body = 'Les informations ne permettent pas de confirmer que le sac vous appartient.'
+);
+
+
+
+
+
+
+
