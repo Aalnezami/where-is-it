@@ -20,5 +20,5 @@ export function userLogin(req, res) {
     return res.status(400).json({ error: "email et password sont requis" });
 
   // TODO : vérifier l'email et le mot de passe, renvoyer un token JWT si OK
-  res.status(501).json({ error: "Non implémenté" });
+  
 }
