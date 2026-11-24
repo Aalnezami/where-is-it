@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   email         TEXT NOT NULL UNIQUE,            -- un seul compte par e-mail
   password_hash TEXT NOT NULL,
   created_at    TEXT NOT NULL DEFAULT (datetime('now'))
-);
+); 
 
 -- 2) Les annonces (objets perdus ou trouvés)
 CREATE TABLE IF NOT EXISTS items (

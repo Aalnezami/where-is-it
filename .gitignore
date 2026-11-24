@@ -2,7 +2,7 @@
 node_modules/
 
 # Base de données SQLite locale
-*.db
+*.db 
 *.sqlite
 *.sqlite3
 *.db-wal

@@ -116,3 +116,4 @@ footer{background:var(--navy);color:#E9EAF8}
   }
 .fav::before{content:"♡"}
 .fav[aria-pressed="true"]::before{content:"♥"}
+ 
