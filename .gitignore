@@ -1,10 +1,12 @@
 # Dépendances Node
 node_modules/
 
-# Base de données SQLite locale (pour ne pas versionner tes données de test)
+# Base de données SQLite locale
 *.db
 *.sqlite
 *.sqlite3
+*.db-wal
+*.db-shm
 
 # Fichiers d'environnement et logs
 .env

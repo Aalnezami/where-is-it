@@ -2,6 +2,9 @@ import express from "express";
 import { fileURLToPath } from "node:url";
 import usersRoutes from "./src/routes/users.routes.js";
 import itemsRoutes from "./src/routes/items.routes.js";
+import referenceRoutes from "./src/routes/reference.routes.js";
+
+//import categoriesRoutes from "./src/routes/categories.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +14,7 @@ app.use(express.static(fileURLToPath(new URL("./public", import.meta.url))));  /
 
 app.use("/api/users", usersRoutes);
 app.use("/api/items", itemsRoutes);
+app.use("/api", referenceRoutes);
 
 // URL inconnue sous /api
 app.use("/api", (req, res) => res.status(404).json({ error: "Route introuvable" }));

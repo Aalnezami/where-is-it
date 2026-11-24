@@ -1,4 +1,6 @@
-// Page de connexion : validation Bootstrap, bouton afficher/masquer, envoi au serveur
+/**
+ * Page de connexion : validation Bootstrap, bouton afficher/masquer, envoi au serveur
+ */
 const $ = id => document.getElementById(id);
 
 function updateToggle() {
@@ -17,8 +19,8 @@ $("form").addEventListener("submit", async e => {
   $("form").classList.add("was-validated");          // Bootstrap affiche les erreurs
   if (!$("form").checkValidity()) return;
 
-  // À brancher à la phase 6 (authentification) : POST /api/login
-  const res = await fetch("/api/login", {
+  // POST /api/users/login
+  const res = await fetch("/api/users/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: $("email").value, password: $("pw").value, remember: $("remember").checked })

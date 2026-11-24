@@ -1,3 +1,6 @@
+const API = "/api";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const $ = id => document.getElementById(id);
 /**
  * variable globale pour savoir si l'utilisateur recherche un objet perdu ou trouvé
  * -1 : aucun objet sélectionné
@@ -27,62 +30,256 @@ function selectObjetRecherche(id) {
     }
 }
 
+/**
+ * lister les catégories dans le select
+ */
+function listerCategories(appliLanguage) {
+    fetch(API+"/categories")
+        .then(response => response.json())
+        .then(data => {
+            const selectCategorie = document.getElementById("categorie");
+            data.forEach(categorie => {
+                const option = document.createElement("option");
+                option.value = categorie.id;
+                option.textContent = appliLanguage === "en" ? categorie.label_en : categorie.label_fr;
+                selectCategorie.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Erreur lors de la récupération des catégories :", error));
+}
+listerCategories(document.documentElement.lang);
+
+/**
+ * lister les couleurs dans le select
+ */
+// Choisit texte noir ou blanc selon la clarté du fond, pour rester lisible
+function texteLisible(hex) {
+    const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#000" : "#fff";
+}
+
+function listerCouleurs(appliLanguage) {
+    fetch(API + "/colors")
+        .then(response => response.json())
+        .then(data => {
+            const selectCouleur = document.getElementById("couleurs");
+            data.forEach(couleur => {
+                const option = document.createElement("option");
+                option.value = couleur.id;
+                option.textContent = appliLanguage === "en" ? couleur.label_en : couleur.label_fr;
+                if (couleur.hex.startsWith("#")) {          // "Multicolore" est un dégradé : pas de fond
+                    option.style.backgroundColor = couleur.hex;
+                    option.style.color = texteLisible(couleur.hex);
+                }
+                selectCouleur.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Erreur lors de la récupération des couleurs :", error));
+}
+
+// La liste fermée prend la couleur de l'option choisie
+document.getElementById("couleurs").addEventListener("change", e => {
+    const o = e.target.selectedOptions[0];
+    e.target.style.backgroundColor = o.style.backgroundColor;
+    e.target.style.color = o.style.color;
+});
+listerCouleurs(document.documentElement.lang);
+
+/**
+ * lister les villes dans le select
+ */
+function listerVilles() {
+    fetch(API+"/cities")
+        .then(response => response.json())
+        .then(data => {
+            const selectVille = document.getElementById("villes");
+            data.forEach(ville => {
+                const option = document.createElement("option");
+                option.value = ville.id;
+                option.textContent = `${ville.name} (${ville.postal_code})`;
+                selectVille.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Erreur lors de la récupération des villes :", error));
+}
+listerVilles();
+
+/**
+ * Affiche un message d'alerte dans la page, qui disparaît après 5 secondes
+ * @param {*} message 
+ * @param {*} type 
+ */
+function afficherMessage(message, type) {
+    const messageContainer = document.getElementById("messageContainer");
+    messageContainer.innerHTML = `<div class="text-center alert alert-${type}" role="alert">${message}</div>`;
+    messageContainer.classList.remove("d-none");
+    setTimeout(() => {
+        messageContainer.classList.add("d-none");
+    }, 20000); // Masquer le message après 5 secondes
+}
+
+/** Recopie les critères de la page dans les filtres du pop-up */
+function copierValeursRecherchees() {
+    [["categorie", "mCat"], ["villes", "mCity"], ["couleurs", "mColor"]].forEach(([src, dst]) => {
+        $(dst).innerHTML = $(src).innerHTML;
+        $(dst).value = $(src).value;
+    });
+    $("mQ").value = $("q").value;
+    $(objetRecherche === 1 ? "mLost" : "mFound").checked = true;
+}
+
+/** 
+ * Nombre de résultats, ou message "aucune annonce" 
+ */
+function afficherCompteur(total) {
+    const vide = total === 0;
+    $("mCount").className = vide ? "h4 text-center pt-4 mb-0" : "text-muted";
+    $("mCount").textContent = vide ? t("results.empty") : t(total === 1 ? "count.1" : "count.n", { n: total });
+}
+
+/** 
+ * Liste des cartes (ou conseil si la liste est vide) 
+ */
+function afficherAnnonces(items) {
+    $("mResults").innerHTML = items.length
+        ? items.map(creerCarte).join("")
+        : `<p class="col-12 text-center text-muted">${t("results.empty.hint")}</p>`;
+}
+
+/**
+ * gestion de localStorage pour les favoris : on stocke un tableau d'ids d'annonces
+ */
+const getFavoris = () => JSON.parse(localStorage.getItem("favoris") || "[]");
+
+function toggleFavori(btn) {
+    const id = Number(btn.dataset.id), liste = getFavoris();
+    const maj = liste.includes(id) ? liste.filter(x => x !== id) : [...liste, id];
+    localStorage.setItem("favoris", JSON.stringify(maj));
+    btn.setAttribute("aria-pressed", maj.includes(id));
+}
+
+$("mResults").addEventListener("click", e => {
+    const btn = e.target.closest(".fav");
+    if (btn) toggleFavori(btn);
+});
+
+
+/** 
+ * Une carte d'annonce 
+ */
+function creerCarte(i) {
+    const en = document.documentElement.lang === "en";
+    const date = new Date(i.date).toLocaleDateString(document.documentElement.lang);
+    const src = i.photo ? "/uploads/" + i.photo : "../img/default-item.svg";
+    return `
+        <div class="col-6 col-md-3 col-lg-4" style="min-width: 230px; max-width:100%">
+          <article class="tag-card" style="border-top-color:${esc(i.type_hex)}">
+            <span class="badge-type" style="color:${esc(i.type_hex)}">${esc(en ? i.type_en : i.type_fr)}</span>
+            <img class="card-photo mt-2" src="${esc(src)}" alt="${i.photo ? esc(i.title) : ""}" loading="lazy" onerror="this.onerror=null;this.src='../img/default-item.svg'">
+            <h3 class="h5 mt-2">${esc(i.title)}</h3>
+            <p class="mb-0">${esc(en ? i.category_en : i.category_fr)}<br>
+            ${esc(i.place)}, ${esc(i.city)}<br>
+            ${date} . <span class="dot_annonce" style="background:${esc(i.color_hex)}" aria-hidden="true"></span>${esc(en ? i.color_en : i.color_fr)}
+            <span class="float-end">
+                <button type="button" class="fav" data-id="${i.id}" aria-pressed="${getFavoris().includes(i.id)}"aria-label="${t("fav.label")} : ${esc(i.title)}"></button>
+            </span>
+            </p>
+          </article>
+        </div>`;
+}
+
+
+/** 
+ * Boutons précédent / suivant (cachés s'il n'y a qu'une page) 
+ */
+function afficherPagination(page) {
+    $("mFooter").classList.toggle("d-none", totalPages <= 1);
+    $("pageInfo").textContent = page + " / " + totalPages;
+    $("prev").disabled = page <= 1;
+    $("next").disabled = page >= totalPages;
+}
+
+/** 
+ * Point d'entrée : met à jour tout le contenu du pop-up 
+ */
+function afficherResultats({ items, page, total, totalPages: tp }) {
+    pageCourante = page;
+    totalPages = Math.max(tp, 1);
+    afficherCompteur(total);
+    afficherAnnonces(items);
+    //afficherPagination(page);
+}
+
+/**
+ * pop-up de recherche d'annonces selon les critères passés en query string
+ * @param {*} req 
+ * @param {*} res
+ */
+/* ---------- Recherche : pop-up de résultats ---------- */
+const modalResultats = new bootstrap.Modal($("resultsModal"));
+let pageCourante = 1, totalPages = 1;
+
+async function searchItems(page = 1) {
+    if (objetRecherche === -1) {
+        afficherMessage("Veuillez sélectionner si vous avez perdu ou trouvé un objet.", "danger");
+        return;
+    }
+
+    const motcle = document.getElementById("q").value;
+    const ville = document.getElementById("villes").value;
+    const categorie = document.getElementById("categorie").value;
+    const couleur = document.getElementById("couleurs").value;
+    
+    if(!motcle && !ville && !categorie && !couleur) {
+        afficherMessage("Veuillez saisir au moins un critère de recherche.", "danger");
+        return;
+    }
+    
+    const params = new URLSearchParams({ type_id: objetRecherche, page, limit: 9 });
+    [["categorie", "category_id"], ["villes", "city_id"], ["couleurs", "color_id"], ["q", "q"]]
+        .forEach(([id, cle]) => { const v = $(id).value.trim(); if (v) params.append(cle, v); });
+    const url = API + "/items?" + params.toString();
+
+    try {
+        const data = await (await fetch(url)).json();
+        afficherMessage(`Recherche effectuée avec succès. ${data.total} annonce(s) trouvée(s).`, "success");
+        copierValeursRecherchees();
+        afficherResultats(data);
+        modalResultats.show();
+    } catch (e) {
+        console.error("Erreur recherche :", e);
+        afficherMessage("Impossible de charger les annonces.", "danger");
+    }
+}
+
+// Le formulaire ne recharge plus la page
+$("categorie").closest("form").addEventListener("submit", e => {
+    e.preventDefault();
+    searchItems(1);
+});
+$("prev").addEventListener("click", () => searchItems(pageCourante - 1));
+$("next").addEventListener("click", () => searchItems(pageCourante + 1));
+
+
+/**
+ * Cherche depuis le pop-up : recopie les critères dans la page principale et relance la recherche
+ * (utile si l'utilisateur veut modifier les critères depuis le pop-up)
+ */
+function chercherDepuisPopup() {
+    const type = document.querySelector('input[name="mType"]:checked');
+    if (type) selectObjetRecherche(Number(type.value));
+    $("categorie").value = $("mCat").value;
+    $("villes").value = $("mCity").value;
+    $("couleurs").value = $("mColor").value;
+    $("q").value = $("mQ").value;
+    searchItems();
+}
 
 // début du code fait par l'IA ------------------------------------------------------
-// Données d'exemple : plus tard, elles viendront du serveur avec fetch("/api/items")
-const COLORS = { blue: "#3b6ea5", black: "#222", red: "#b3382c", green: "#4c8a5a", grey: "#8a8f94", brown: "#7a5232" };
-const CATS = ["keys", "bags", "phone", "clothes", "docs"];
-const ITEMS = [
-  { id: 1, type: "found", cat: "keys", color: "grey", place: "Bibliothèque", date: "2026-11-10", title: { fr: "Trousseau avec porte-clé en bois", en: "Key ring with a wooden tag" } },
-  { id: 2, type: "lost", cat: "bags", color: "blue", place: "Restaurant universitaire", date: "2026-11-09", title: { fr: "Sac à dos bleu, cahier à spirale", en: "Blue backpack, spiral notebook" } },
-  { id: 3, type: "found", cat: "phone", color: "black", place: "Amphi B", date: "2026-11-11", title: { fr: "Téléphone avec coque noire", en: "Phone with a black case" } },
-  { id: 4, type: "lost", cat: "clothes", color: "green", place: "Arrêt de tram", date: "2026-11-08", title: { fr: "Écharpe en laine verte", en: "Green wool scarf" } },
-  { id: 5, type: "found", cat: "docs", color: "brown", place: "Hall des sciences", date: "2026-11-12", title: { fr: "Portefeuille avec carte d’étudiant", en: "Wallet with a student card" } },
-  { id: 6, type: "lost", cat: "keys", color: "red", place: "Parking sud", date: "2026-11-07", title: { fr: "Clé de voiture, étui rouge", en: "Car key, red case" } }
-];
-
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const $ = id => document.getElementById(id);
-
-function fillSelects() {
-  const keepCat = $("cat").value, keepType = $("type").value;
-  $("cat").innerHTML = `<option value="">${t("cat.all")}</option>` + CATS.map(c => `<option value="${c}">${t("cat." + c)}</option>`).join("");
-  $("type").innerHTML = `<option value="">${t("type.all")}</option><option value="lost">${t("type.lost")}</option><option value="found">${t("type.found")}</option>`;
-  $("cat").value = keepCat; $("type").value = keepType;
-}
-
-function render() {
-  const q = $("q").value.trim().toLowerCase(), cat = $("cat").value, type = $("type").value;
-  const fmt = new Intl.DateTimeFormat(document.documentElement.lang, { day: "numeric", month: "long" });
-  const list = ITEMS.filter(i =>
-    (!cat || i.cat === cat) && (!type || i.type === type) &&
-    (!q || (i.title[document.documentElement.lang] + " " + i.place).toLowerCase().includes(q)));
-
-  $("count").textContent = list.length === 0 ? t("count.0") : list.length === 1 ? t("count.1") : t("count.n", { n: list.length });
-  $("results").innerHTML = list.map(i => `
-    <div class="col-12 col-md-6 col-lg-4">
-      <article class="tag-card ${i.type}" aria-labelledby="it${i.id}">
-        <span class="badge-type badge-${i.type}">${t("type." + i.type)}</span>
-        <h3 id="it${i.id}">${esc(i.title[document.documentElement.lang])}</h3>
-        <dl>
-          <dt>${t("card.place")}</dt><dd>${esc(i.place)}</dd>
-          <dt>${t("card.date")}</dt><dd>${fmt.format(new Date(i.date))}</dd>
-          <dt>${t("card.color")}</dt><dd><span class="dot" style="background:${COLORS[i.color]}" aria-hidden="true"></span>${t("color." + i.color)}</dd>
-        </dl>
-        <a class="btn btn-outline-ink btn-sm mt-3" href="#item-${i.id}">${t("card.view")}<span class="visually-hidden"> : ${esc(i.title[document.documentElement.lang])}</span></a>
-      </article>
-    </div>`).join("");
-}
-
-function refresh() { applyI18n(); fillSelects(); render(); }
-
-document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => { setLang(b.dataset.lang); fillSelects(); render(); updatePause(); }));
-$("form").addEventListener("submit", e => { e.preventDefault(); render(); });
-["q", "cat", "type"].forEach(id => $(id).addEventListener("input", render));
-/* ---- Fond de photos qui défilent ----
-   Ajoute tes photos dans public/img/hero/ puis liste leurs noms ici.
-   Exemple : const HERO_PHOTOS = ["img/hero/cles.jpg", "img/hero/sac.jpg"];
-   Tant que la liste est vide, des cadres colorés s'affichent à la place. */
+/** ---------------------------------------------------------------------------------
+ * Fond de photos qui défilent 
+ *  Photos dans public/img/hero/ puis liste leurs noms ici.
+ */
 const HERO_PHOTOS = ["img/hero/cles.jpg", "img/hero/pf.jpg", "img/hero/montre.jpg", "img/hero/rc.jpg"];
 const PALETTE = [["#FF6B5E", "#D6382F"], ["#38D9B4", "#0E7C66"], ["#FFC845", "#E0A020"], ["#6F7BFF", "#2C35A0"]];
 
@@ -111,5 +308,4 @@ function updatePause() {
 $("pause").addEventListener("click", () => { $("hero").classList.toggle("paused"); updatePause(); });
 
 buildHero();
-refresh();
 updatePause();
