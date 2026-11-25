@@ -36,8 +36,8 @@ export function searchItems({ type_id, category_id, city_id, color_id, q, page =
 // export const listItems = () =>
 //   db.prepare(`SELECT ${COLS} FROM items ORDER BY date DESC, id DESC`).all();
 
-// export const getItem = id =>
-//   db.prepare(`SELECT ${COLS} FROM items WHERE id = ?`).get(id);
+export const getItem = id =>
+  db.prepare(`${SELECT} WHERE items.id = ?`).get(id);
 
 // export function createItem(i) {
 //   const { user_id, type_id, title, description = null, category_id, color_id, place, city_id, date } = i;

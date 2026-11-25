@@ -21,10 +21,10 @@ export function list(req, res) {
   }));
 }
 
-// export function get(req, res) {
-//   const item = items.getItem(req.params.id);
-//   item ? res.json(item) : notFound(res);
-// }
+export function get(req, res) {
+  const item = items.getItem(req.params.id);
+  item ? res.json(item) : notFound(res);
+}
 
 // export function create(req, res) {
 //   const b = req.body;

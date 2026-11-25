@@ -3,7 +3,12 @@ const I18N = {
   fr: {
     skip: "Aller au contenu",
     "nav.label": "Navigation principale", "nav.toggle": "Ouvrir le menu",
-    "nav.search": "Rechercher", "nav.publish": "Publier", "nav.mine": "Mes objets", "nav.login": "Connexion",
+    "nav.search": "Rechercher", "nav.publish": "Publier", "nav.mine": "Mes objets", "nav.login": "Connexion", 
+    "nav.mesfavoris": "Mes favoris",
+    "nav.fav": "Mes favoris", "fav.kicker": "Tes coups de cœur", "fav.title": "Mes favoris",
+    "fav.empty": "Tu n’as pas encore de favori.", "fav.empty.hint": "Appuie sur le cœur d’une annonce pour la retrouver ici.",
+    "fav.back": "Chercher des objets", "results.error": "Impossible de charger les annonces. Réessaie.",
+
     "lang.label": "Choix de la langue",
     "hero.kicker": "Objets perdus et trouvés du campus",
     "hero.title": "Il est quelque part. On le retrouve ensemble.",
@@ -86,6 +91,11 @@ const I18N = {
     skip: "Skip to content",
     "nav.label": "Main navigation", "nav.toggle": "Open menu",
     "nav.search": "Search", "nav.publish": "Post", "nav.mine": "My items", "nav.login": "Log in",
+    "nav.mesfavoris": "My favorites",
+    "nav.fav": "My favorites", "fav.kicker": "Your picks", "fav.title": "My favorites",
+    "fav.empty": "You have no favorites yet.", "fav.empty.hint": "Tap the heart on a listing to find it here.",
+    "fav.back": "Search for items", "results.error": "Could not load the listings. Please try again.",
+
     "lang.label": "Language",
     "hero.kicker": "Campus lost and found",
     "hero.title": "It’s out there. Let’s find it together.",
