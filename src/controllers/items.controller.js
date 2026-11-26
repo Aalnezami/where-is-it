@@ -26,6 +26,8 @@ export function get(req, res) {
   item ? res.json(item) : notFound(res);
 }
 
+export const first3 = (req, res) => res.json(items.first3());
+
 // export function create(req, res) {
 //   const b = req.body;
 //   if (!b.user_id || !b.title || !b.place || !b.city_id || !b.date ||

@@ -275,6 +275,26 @@ function chercherDepuisPopup() {
     searchItems();
 }
 
+/**
+ * Charger les 3 annonces les plus récentes.
+ */
+async function chargerLes3AnnoncesLesPlusRecentes() {
+    try {
+        const res = await fetch(API + "/items/first3");
+        if (!res.ok) throw new Error(res.status);
+        const items = await res.json();
+        $("recentAnnonces").innerHTML = items.length
+            ? items.map(creerCarte).join("")
+            : `<p class="col-12 text-center text-muted">${t("results.empty.hint")}</p>`;
+    } catch (e) {
+        console.error("Erreur lors du chargement des annonces récentes :", e);
+    }
+}
+
+document.addEventListener("langchange", chargerLes3AnnoncesLesPlusRecentes);   // cartes redessinées dans la bonne langue
+chargerLes3AnnoncesLesPlusRecentes();
+
+
 // début du code fait par l'IA ------------------------------------------------------
 /** ---------------------------------------------------------------------------------
  * Fond de photos qui défilent 
